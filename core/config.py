@@ -6,6 +6,6 @@ class DBSettings(BaseSettings):
     echo: bool = True
 
 class Settings(BaseSettings):
-    db: DBSettings 
+    db: DBSettings = DBSettings()
 
 settings = Settings()
