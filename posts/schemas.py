@@ -1,6 +1,6 @@
-from pydantic_settings import BaseSettings
+from pydantic import BaseModel, ConfigDict
 
-class PostBase(BaseSettings):
+class PostBase(BaseModel):
     name: str
     img: str
     description: str
@@ -10,3 +10,7 @@ class PostRead(PostBase):
 
 class PostCreate(PostBase):
     pass
+
+class Post(PostBase):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
