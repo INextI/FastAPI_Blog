@@ -1,16 +1,28 @@
-from fastapi import APIRouter, status
-from .schemas import PostCreate, PostRead, Post
-from typing import Annotated
+from fastapi import APIRouter, status, Depends, Request
+from fastapi.responses import HTMLResponse
+from .schemas import PostCreate, PostRead, Post, PostUpdate, PostUpdatePartial
+from typing import Annotated, List
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import Depends
 from core.models import db_helper
 from . import crud
-from typing import List
+from .dependencies import post_by_id
+from fastapi.templating import Jinja2Templates
 
-router = APIRouter(prefix='/post', tags=['Posts'])
+router = APIRouter(prefix='/posts', tags=['Posts'])
+templates = Jinja2Templates(directory='templates')
 
-@router.get('/', response_model=List[PostRead])
-async def get_post(session: Annotated[AsyncSession, Depends(db_helper.session_getter)]) -> Post:
+@router.get('/', response_class= HTMLResponse)
+async def get_posts_html(request: Request,
+                         session: Annotated[AsyncSession, Depends(db_helper.session_getter)]
+                         ):
+    posts: List[PostRead] = await crud.get_posts(session=session)
+    return templates.TemplateResponse('home.html', {
+        'request': request,
+        'posts': posts,
+    })
+
+@router.get('/', response_model=List[Post])
+async def get_posts(session: Annotated[AsyncSession, Depends(db_helper.session_getter)]) -> Post:
     return await crud.get_posts(session=session)
 
 @router.post('/')
@@ -19,7 +31,26 @@ async def create_post(post: PostCreate,
     
     return await crud.create_post(session=session, post_in=post)
 
-@router.delete('/', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{post_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(post_id: int,
                         session: Annotated[AsyncSession, Depends(db_helper.session_getter)]) -> None:
     await crud.delete_post(post_id=post_id, session=session)
+
+@router.get('/{post_id}', response_model= Post)
+async def get_post_by_id(post: Post = Depends(post_by_id)) -> Post:
+    return post
+
+@router.put('/{post_id}', response_model=Post)
+async def update_post(
+                      post_update: PostUpdate, 
+                      session: Annotated[AsyncSession, Depends(db_helper.session_getter)],
+                      post: Post = Depends(post_by_id)
+                      ):
+    return await crud.update_post(post_update=post_update, session=session, post=post)
+
+@router.patch('/{post_id}', response_model=Post)
+async def update_post_partial(post_update: PostUpdatePartial,
+                              session: Annotated[AsyncSession, Depends(db_helper.session_getter)],
+                              post: Post = Depends(post_by_id),
+                              ):
+    return await crud.update_post_partial(post_update=post_update, session=session, post=post)
