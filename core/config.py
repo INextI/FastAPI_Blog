@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 
+UPLOAD_DIR = 'uploads'
 
 class DBSettings(BaseSettings):
     url: str = f"sqlite+aiosqlite:///./db.sqlite3"
