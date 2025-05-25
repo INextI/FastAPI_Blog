@@ -44,7 +44,7 @@ async def get_image(img: Image = Depends(get_img_by_id)):
     return FileResponse(path=file_path, media_type='image/jpeg') #filename=filename
 
 @router.get('/{img_id}', response_model=ImageBase)
-async def get_image(
+async def get_image_old(
                     img_id: Annotated[int, Path],
                     session: Annotated[AsyncSession, Depends(db_helper.session_getter)]
                     ):

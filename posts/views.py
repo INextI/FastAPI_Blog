@@ -57,23 +57,3 @@ async def update_post_partial(post_update: PostUpdatePartial,
                               ):
     return await crud.update_post_partial(post_update=post_update, session=session, post=post)
 
-
-
-@router.post('/image-upload')
-async def upload_img(img_upload: UploadFile):
-    os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-    import uuid
-
-    ext = img_upload.filename.split('.')[-1]
-    filename = f"{uuid.uuid4()}.{ext}"
-    file_path = os.path.join(UPLOAD_DIR, filename)
-
-    with open(file_path, "wb") as f:
-        content = await img_upload.read()
-        f.write(content)
-    return {"filename": filename}
-
-@router.get('image-viewer')
-async def get_imgs():
-    pass

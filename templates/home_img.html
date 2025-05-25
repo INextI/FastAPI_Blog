@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts Page</title>
+    <link rel="stylesheet" href="/static/css/home.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">MyBlog</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/posts">Posts</a>
+            <a href="/about">About</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="main-posts">
+            {% for post in posts %}
+                <div class="post">
+                    <h3 class="title">{{ post.title }}</h3>
+                    <img src="/uploads/{{ post.image.file_name }}" alt="Post image" class="img_in_post">
+                    <p class="description">{{ post.text }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>
