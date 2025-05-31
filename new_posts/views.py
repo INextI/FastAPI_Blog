@@ -57,4 +57,10 @@ async def get_posts(
         'posts' : posts
     })
 
+@router.delete('/{post_id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(post_id: int,
+                      session: Annotated[AsyncSession, Depends(db_helper.session_getter)]
+                      ):
+    await crud.delete_post(post_id=post_id, session=session)
+
 

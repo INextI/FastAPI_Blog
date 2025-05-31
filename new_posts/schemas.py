@@ -4,6 +4,7 @@ class NewPostBase(BaseModel):
     title: str
     img_id: int
     text: str
+    author: str
 
 class NewPostCreate(NewPostBase):
     pass

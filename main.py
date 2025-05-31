@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter, Depends
 from posts.views import router as posts_router
 from images.views import router as image_router
 from new_posts.views import router as new_posts_router
+from users.views import router as user_router
 import uvicorn
 from fastapi.staticfiles import StaticFiles
 from core.config import UPLOAD_DIR
@@ -15,6 +16,7 @@ app.mount(f'/{UPLOAD_DIR}', StaticFiles(directory=UPLOAD_DIR), name='uploads')
 app.include_router(posts_router)
 app.include_router(image_router)
 app.include_router(new_posts_router)
+app.include_router(user_router)
 
 
 @app.get('/')

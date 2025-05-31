@@ -4,6 +4,8 @@ from sqlalchemy import select
 from fastapi import HTTPException, status, Path
 from sqlalchemy.engine import Result
 from typing import Annotated
+from core.config import UPLOAD_DIR
+import os
 
 async def create_img(filename: str, session: AsyncSession):
 
@@ -23,3 +25,11 @@ async def get_images(session: AsyncSession)-> list[Image]:
 
 async def get_image(img_id: int, session: AsyncSession) -> Image:
     return await session.get(Image, img_id)
+
+async def delete_image(img_id, session: AsyncSession) -> None:
+    image = await session.get(Image, img_id)
+    image_path = os.path.join(UPLOAD_DIR, image.file_name)
+    if os.path.exists(image_path):
+        os.remove(image_path)
+    await session.delete(image)
+    await session.commit()

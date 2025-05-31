@@ -49,3 +49,9 @@ async def get_image_old(
                     session: Annotated[AsyncSession, Depends(db_helper.session_getter)]
                     ):
     return await crud.get_image(img_id=img_id, session=session)
+
+@router.delete('/{img_id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_image(img_id: int,
+                       session: Annotated[AsyncSession, Depends(db_helper.session_getter)]
+                       ):
+    await crud.delete_image(img_id=img_id, session=session)
