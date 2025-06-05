@@ -4,13 +4,15 @@ from .schemas import NewPostBase, NewPostCreate
 from sqlalchemy import select
 from sqlalchemy.engine import Result
 from images import crud as img_crud
+from users.shemas import UserBaseFull
 
 async def create_post(title: str,
                       img_id: int,
                       text: str,
                       session: AsyncSession,
+                      user_id: int
                       ) -> NewPost:
-    post = NewPost(title= title, img_id = img_id, text=text)
+    post = NewPost(title= title, img_id = img_id, text=text, author_id = user_id)
     session.add(post)
     await session.commit()
     await session.refresh(post)

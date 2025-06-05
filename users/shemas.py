@@ -15,7 +15,6 @@ class UserBaseFull(UserBase):
     hashed_password: str
     id: int
 
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
+class UserMe(UserBase):
+    id: int
+    is_admin: bool

@@ -26,20 +26,31 @@ def decode_jwt(
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) ->str:
-    private_key = open("certs/jwt-private.pem", "rb").read()
     to_encode = data.copy()
     exp = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=3))
     to_encode.update({"exp": exp})
-    encode_jwt = jwt.encode(to_encode, private_key, algorithm="RS256")
-    return encode_jwt
+    return encode_jwt(to_encode)
 
 
 def decode_access_token(token: str) -> dict:
-    public_key = open("certs/jwt-public.pem", "rb").read()
     try:
-        payload = jwt.decode(token, public_key, algorithms=["RS256"])
-        return payload
+        return decode_jwt(token)
     except jwt.ExpiredSignatureError:
-        raise Exception('Токен истек')
+        raise Exception('Refresh token expired')
     except jwt.InvalidTokenError:
-        raise Exception("Неверный токен")
+        raise Exception("Invalid access token")
+    
+
+def create_refresh_token(data: dict, expires_delta: timedelta | None = None) -> str:
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(days = 7))
+    to_encode.update({"exp" : expire})
+    return encode_jwt(to_encode)
+
+def decode_refresh_token(token: str) -> dict:
+    try:
+        return decode_jwt(token)
+    except jwt.ExpiredSignatureError:
+        raise Exception("Refresh token expired")
+    except jwt.InvalidTokenError:
+        raise Exception("Invalid refersh token")

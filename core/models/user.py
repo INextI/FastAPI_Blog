@@ -10,7 +10,7 @@ class User(Base):
     nickname: Mapped[str] = mapped_column(unique=True)
     is_admin: Mapped[bool]
     email: Mapped[str] = mapped_column(unique=True)
-    hashed_password: Mapped[str]
+    hashed_password: Mapped[bytes]
 
     posts: Mapped[list["NewPost"]] = relationship("NewPost", back_populates='author', cascade='all, delete-orphan')
 
